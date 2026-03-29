@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knowledge QA Forum</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; }
+        .navbar { background: #007bff; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 30px auto; display: flex; gap: 30px; padding: 0 20px; }
+
+        /* 侧边栏 */
+        .sidebar { flex: 1; min-width: 250px; }
+        .sidebar-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+        .tag-nav-list { list-style: none; padding: 0; margin-top: 15px; }
+        .tag-nav-item a {
+            display: flex; justify-content: space-between; padding: 12px 15px;
+            color: #4a5568; text-decoration: none; border-radius: 8px; margin-bottom: 5px; transition: 0.2s;
+        }
+        .tag-nav-item a:hover { background: #edf2f7; color: #2b6cb0; }
+        .tag-nav-item.active a { background: #ebf8ff; color: #3182ce; font-weight: bold; }
+        .tag-count { background: #e2e8f0; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+
+        /* 中央内容区 */
+        .main-content { flex: 3; }
+        .search-bar { display: flex; gap: 10px; margin-bottom: 25px; }
+        .search-input { flex: 1; padding: 12px 20px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        .btn-search { background: #007bff; color: white; border: none; padding: 0 25px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+
+        .post-card { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #eee; transition: 0.3s; }
+        .post-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .post-title { font-size: 20px; color: #2d3748; text-decoration: none; font-weight: 600; display: block; margin-bottom: 10px; }
+        .post-meta { font-size: 13px; color: #718096; display: flex; gap: 15px; margin-top: 15px; }
+
+        .btn-post { background: #28a745; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div style="font-size: 24px; font-weight: bold;">Knowledge QA Forum</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            {% if user.is_authenticated %}
+                <span>Welcome, {{ user.username }}</span>
+                <a href="{% url 'profile' %}" style="color: white; text-decoration: none;">My Profile</a>
+                <a href="{% url 'create_post' %}" class="btn-post">+ Deliver a post</a>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer;">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" style="color: white;">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 style="margin: 0; color: #2d3748;">Tags</h3>
+                <ul class="tag-nav-list">
+                    <li class="tag-nav-item {% if not current_tag %}active{% endif %}">
+                        <a href="{% url 'index' %}">All Posts</a>
+                    </li>
+                    {% for tag in tags %}
+                    <li class="tag-nav-item {% if current_tag == tag.name %}active{% endif %}">
+                        <a href="{% url 'index' %}?tag={{ tag.name }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                            <span># {{ tag.name }}</span>
+                            <span class="tag-count">{{ tag.post_set.count }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <form class="search-bar" method="get" action="{% url 'index' %}">
+                <input type="text" name="search" class="search-input" placeholder="Search by title or content..." value="{{ request.GET.search|default:'' }}">
+                {% if current_tag %}
+                    <input type="hidden" name="tag" value="{{ current_tag }}">
+                {% endif %}
+                <button type="submit" class="btn-search">Search</button>
+                {% if request.GET.search or current_tag %}
+                    <a href="{% url 'index' %}" style="line-height: 45px; margin-left: 10px; color: #999; text-decoration: none;">Clear</a>
+                {% endif %}
+            </form>
+
+            {% for post in posts %}
+            <div class="post-card">
+                <a href="{% url 'post_detail' post.pk %}" class="post-title">{{ post.title }}</a>
+                <p style="color: #4a5568; line-height: 1.6;">{{ post.content|truncatewords:30 }}</p>
+                <div class="post-meta">
+                    <span style="background: #edf2f7; padding: 2px 8px; border-radius: 4px;">{{ post.tags.all.0.name|default:"General" }}</span>
+                    <span>By <b>{{ post.author.username }}</b></span>
+                    <span>{{ post.created_at|date:"Y-m-d" }}</span>
+                    <span>💬 {{ post.comments.count }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; color: #a0aec0; padding: 50px;">
+                <h2>No posts found.</h2>
+                <p>Try different keywords or tags.</p>
+            </div>
+            {% endfor %}
+        </main>
+    </div>
+</body>
+</html>

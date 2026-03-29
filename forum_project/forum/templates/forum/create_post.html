@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deliver New Post</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding-top: 40px; }
+        .auth-card { background: white; width: 100%; max-width: 900px; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        h2 { color: #1a202c; border-bottom: 3px solid #007bff; display: inline-block; padding-bottom: 8px; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #4a5568; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+
+        /* 标签选择器专有样式 - 核心修改区 */
+        .tag-selection-wrapper { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+        .tag-selection-wrapper input[type="checkbox"] {
+            position: absolute; opacity: 0; width: 0; height: 0; /* 彻底隐藏原始框 */
+        }
+        .tag-selectable-chip {
+            display: inline-block; padding: 10px 20px; background: #fff;
+            border: 2px solid #edf2f7; border-radius: 30px; cursor: pointer;
+            font-size: 14px; color: #4a5568; transition: all 0.2s; user-select: none;
+        }
+        .tag-selectable-chip:hover { border-color: #007bff; color: #007bff; }
+
+        /* 选中后的样式变换 */
+        .tag-selection-wrapper input[type="checkbox"]:checked + .tag-selectable-chip {
+            background-color: #007bff; border-color: #007bff; color: white;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-publish { background: #28a745; color: white; border: none; padding: 12px 40px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-publish:hover { background: #218838; }
+        .btn-cancel { color: #e53e3e; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h2>Deliver new post</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.media }} <div class="form-group">
+                <label>Post Title:</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label>Content (Markdown):</label>
+                {{ form.content }}
+            </div>
+
+            <div class="form-group">
+                <label>Select Relevant Tags:</label>
+                <div class="tag-selection-wrapper">
+                    {% for checkbox in form.tags %}
+                        <label>
+                            {{ checkbox.tag }} <span class="tag-selectable-chip">{{ checkbox.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px;">
+                <a href="{% url 'index' %}" class="btn-cancel">Cancel & Return</a>
+                <button type="submit" class="btn-publish" onclick="return confirm('Ready to publish?')">Publish Now</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
