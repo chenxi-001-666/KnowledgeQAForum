@@ -9,8 +9,8 @@ A modern, full-stack Q&A community built with Django. This platform features a c
 
 一个基于 Django 构建的现代化全栈问答社区。该平台拥有简洁的用户界面、Markdown 支持以及强大的搜索引擎，帮助用户高效地分享和发现知识。
 
-Project Demo link: https://drive.google.com/file/d/11ogcKQ50AboLEuLqWo_0tOO-S8g_VqJx/view?usp=sharing
-项目展示链接: https://drive.google.com/file/d/11ogcKQ50AboLEuLqWo_0tOO-S8g_VqJx/view?usp=sharing
+* **Project Demo link**: https://drive.google.com/file/d/11ogcKQ50AboLEuLqWo_0tOO-S8g_VqJx/view?usp=sharing
+* **项目展示链接**: https://drive.google.com/file/d/11ogcKQ50AboLEuLqWo_0tOO-S8g_VqJx/view?usp=sharing
 
 ---
 
