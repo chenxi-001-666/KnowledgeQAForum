@@ -1,7 +1,3 @@
-Here's your revised README with bilingual content, complete setup instructions, and tech stack badges:
-
----
-
 # Knowledge QA Forum 📚
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
